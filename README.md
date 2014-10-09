@@ -19,17 +19,18 @@ The gyg-framework is a very basic framework for MVC- and web development. The fr
 create individual front-controllers with their own pages and argument interpretation. The workflow is as follows:
 
 Example URL: www.site.com?controller/page/arg1/arg2...
-*	Parse the query string "?controller/page/arg1/arg2..." into an array of the following structure:
-		$gyg['controller'] = controller
-		$gyg['page'] = page
-		$gyg['args'] = [arg1, arg2, ...]
+
+1. Parse the query string "?controller/page/arg1/arg2..." into an array of the following structure:
+  * $gyg['controller'] = controller
+  * $gyg['page'] = page
+  * $gyg['args'] = [arg1, arg2, ...]
 	
-*	Redirect to the controller and let it interpret the remaining arguments.
+2. Redirect to the controller and let it interpret the remaining arguments.
 
 That's it! The controller alone decides how to interpret remaining arguments. This means there is complete freedom when creating a controller.
 The workflow within a controller usually looks like this:
-* The controller interprets the page argument ($gyg['page']) and redirects to a page.
-* The page interprets the remaining arguments ($gyg['args']) and does something with them.
+1. The controller interprets the page argument ($gyg['page']) and redirects to a page.
+2. The page interprets the remaining arguments ($gyg['args']) and does something with them.
 
 Rendering
 =========
@@ -42,9 +43,10 @@ Contains all the logic and sets the actual content of the page.
 TEMPLATE FILE:
 Contains the structure of the page.
 
-To use gyg-framework's rendering, in your model file, simply set the path of your template file to "$gyg['templatePath'] = 'absolutePathToTemplate' and include 
-gyg-framework's render path (include(GYG_RENDER_PATH);) at the end.
+To use gyg-framework's rendering, in your model file, simply set the path of your template file to 
 
+    $gyg['templatePath'] = 'absolutePathToTemplate' 
+and include gyg-framework's render path at the end.
 
-
-
+    include(GYG_RENDER_PATH);
+    
