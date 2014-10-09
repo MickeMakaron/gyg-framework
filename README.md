@@ -19,17 +19,17 @@ The gyg-framework is a very basic framework for MVC- and web development. The fr
 create individual front-controllers with their own pages and argument interpretation. The workflow is as follows:
 
 Example URL: www.site.com?controller/page/arg1/arg2...
-1.	Parse the query string "?controller/page/arg1/arg2..." into an array of the following structure:
+*	Parse the query string "?controller/page/arg1/arg2..." into an array of the following structure:
 		$gyg['controller'] = controller
 		$gyg['page'] = page
 		$gyg['args'] = [arg1, arg2, ...]
 	
-2.	Redirect to the controller and let it interpret the remaining arguments.
+*	Redirect to the controller and let it interpret the remaining arguments.
 
 That's it! The controller alone decides how to interpret remaining arguments. This means there is complete freedom when creating a controller.
 The workflow within a controller usually looks like this:
-1. The controller interprets the page argument ($gyg['page']) and redirects to a page.
-2. The page interprets the remaining arguments ($gyg['args']) and does something with them.
+* The controller interprets the page argument ($gyg['page']) and redirects to a page.
+* The page interprets the remaining arguments ($gyg['args']) and does something with them.
 
 Rendering
 =========
