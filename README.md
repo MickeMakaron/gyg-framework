@@ -38,7 +38,7 @@ The workflow within a controller usually looks like this:
 2. The page interprets the remaining arguments ($gyg['args']) and does something with them.
 
 ##Rendering
-Additionally, the gyg-framework offers a MVC-structured rendering model. This is entirely located in the page. To make use of it, the page's file
+Additionally, the gyg-framework offers an MVC-structured rendering model. This is entirely located in the page. To make use of it, the page's file
 structure is as follows:
 
 MODEL FILE:
