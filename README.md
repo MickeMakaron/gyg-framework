@@ -1,11 +1,17 @@
 gyg-framework
 =============
 ##Introduction
-gyg-framework is a framework for easy setup of controllers and pretty URLs.
+gyg-framework is a very simple and lightweight framework for easy setup of controllers and pretty URLs. It's essentially an
+URL parser with some additional features.
 
-* Does not use .htaccess.
-* Simple and lightweight: Only a few files large and designed for complete user configuration. Does not depend on any libraries and only uses PHP, HTML and CSS.
+Note that gyg-framework
+* does not use .htaccess.
+* is fully PHP.
+* has no library dependancies (except standard PHP).
 
+Features include:
+* URL parsing
+* MVC-like rendering
 
 ##Setup
 * Extract into the website's root directory.
@@ -13,7 +19,7 @@ gyg-framework is a framework for easy setup of controllers and pretty URLs.
 * Done!
 
 
-##Workflow
+##URL parsing
 The gyg-framework is a very basic framework for MVC- and web development. The framework allows the user to 
 create individual front-controllers with their own pages and argument interpretation. The workflow is as follows:
 
@@ -47,4 +53,3 @@ To use gyg-framework's rendering, in your model file, simply set the path of you
 and include gyg-framework's render path at the end.
 
     include(GYG_RENDER_PATH);
-    
