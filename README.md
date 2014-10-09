@@ -18,7 +18,7 @@ Introduction
 The gyg-framework is a very basic framework for MVC- and web development. The framework allows the user to 
 create individual front-controllers with their own pages and argument interpretation. The workflow is as follows:
 
-www.site.com?controller/page/arg1/arg2...
+Example URL: www.site.com?controller/page/arg1/arg2...
 1.	Parse the query string "?controller/page/arg1/arg2..." into an array of the following structure:
 		$gyg['controller'] = controller
 		$gyg['page'] = page
