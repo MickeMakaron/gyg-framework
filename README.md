@@ -1,4 +1,4 @@
 gyg-framework
 =============
 
-Framework for easy setup of individual controllers.
+Framework for easy setup of controllers.
