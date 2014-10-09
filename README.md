@@ -1,20 +1,19 @@
 gyg-framework
 =============
-Framework for easy setup of controllers and pretty URLs.
+#Introduction
+gyg-framework is a framework for easy setup of controllers and pretty URLs.
 
 * Does not use .htaccess.
 * Simple and lightweight: Only a few files large and designed for complete user configuration. Does not depend on any libraries and only uses PHP, HTML and CSS.
 
 
-Setup
-=============
+#Setup
 * Extract into the website's root directory.
 * Set the mandatory configuration options in "gyg/config.php".
 * Done!
 
 
-Introduction
-===========
+#Workflow
 The gyg-framework is a very basic framework for MVC- and web development. The framework allows the user to 
 create individual front-controllers with their own pages and argument interpretation. The workflow is as follows:
 
@@ -32,8 +31,7 @@ The workflow within a controller usually looks like this:
 1. The controller interprets the page argument ($gyg['page']) and redirects to a page.
 2. The page interprets the remaining arguments ($gyg['args']) and does something with them.
 
-Rendering
-=========
+#Rendering
 Additionally, the gyg-framework offers a MVC-structured rendering model. This is entirely located in the page. To make use of it, the page's file
 structure is as follows:
 
