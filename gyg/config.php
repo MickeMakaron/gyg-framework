@@ -104,7 +104,7 @@ $gyg = [];
  */
 $gyg['controllers'] = 
 [
-	'gyg' 		=> ['enabled' => true],
+	'example' 		=> ['enabled' => true],
 	'file'		=> ['enabled' => true]
 ];
 
@@ -143,7 +143,7 @@ $gyg['controllers'] =
  */
 $gyg['shortcuts'] =
 [
-	'file1' => ['enabled' => true, 'path' => ''],
+	'shortcut' => ['enabled' => true, 'path' => ''],
 ];
  
 
