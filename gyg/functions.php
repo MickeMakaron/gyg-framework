@@ -28,10 +28,37 @@ Class gyg
 	}
 	
 	/*
-	 * Check if the page ID of a controller exists and is enabled.
+	 * Check if the controller ID of a controller exists, is enabled
+	 * and is whitelisted properly in $gyg['controllers'].
+	 */
+	static function controllerIsEnabled($controllerId)
+	{
+		global $gyg;
+		
+		// Is the controller ID even registered in the gyg config?
+		if(!isset($gyg['controllers'][$controllerId]))
+			return false;
+			
+		// Yep, it's registered.
+		$controller = $gyg['controllers'][$controllerId];
+		
+		// Throw exception if the controller doesn't have a "enabled" property.
+		if(!isset($controller['enabled']))
+			throw new Exception('gyg::controllerIsEnabled (functions.php): Controller is not properly registered in gyg config. "Enabled" property is missing.');
+			
+		return ($controller['enabled'] === true);
+	}
+	
+	/*
+	 * Check if the page ID of a controller exists, is enabled and is 
+	 * whitelisted properly in $gyg['controllers'].
+	 *
 	 * pageIsEnabled uses the $gyg['pages'] array. If the controller
 	 * doesn't make use of this array as a whitelist, this function will
 	 * not work.
+	 *
+	 * NOTE: This function only works at the controller stage or below
+	 * because that's where the $gyg['pages'] variable is set.
 	 */
 	static function pageIsEnabled($controllerId, $pageId)
 	{
@@ -59,5 +86,31 @@ Class gyg
 		}
 		else
 			return false;
+	}
+	
+	/*
+	 * Check if the shortcut ID of a shortcut exists, is enabled and
+	 * is whitelisted properly in $gyg['shortcuts'].
+	 */
+	static function shortcutIsEnabled($shortcutId)
+	{
+		global $gyg;
+		
+		// Is the shortcut ID even registered in the gyg config?
+		if(!isset($gyg['shortcuts'][$shortcutId]))
+			return false;
+			
+		// Yep, it's registered.
+		$shortcut = $gyg['shortcuts'][$shortcutId];
+		
+		// Throw exception if the shortcut doesn't have a "enabled" property.
+		if(!isset($shortcut['enabled']))
+			throw new Exception('gyg::shortcutIsEnabled (functions.php): Shortcut is not properly registered in gyg config. "Enabled" property is missing.');
+			
+		// Throw exception if the shortcut doesn't have a "path" property.
+		if(!isset($shortcut['path']))
+			throw new Exception('gyg::shortcutIsEnabled (functions.php): Shortcut is not properly registered in gyg config. "Path" property is missing.');
+			
+		return ($shortcut['enabled'] === true);
 	}
 };
