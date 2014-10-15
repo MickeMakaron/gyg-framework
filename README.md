@@ -70,4 +70,4 @@ To do this, simply add the following to gyg's shortcut array in gyg's config fil
 
 Now gyg-framework will interpret "?shortcutID" as "?controller/page/arg1". Note, however,
 that shortcuts have lower priority than controllers. If an enabled shortcut and controller share
-the same ID, gyg-framework will prioritize the controller. Thus, try to use unique IDs.
+the same ID, gyg-framework will prioritize the controller. For this reason, try to use unique IDs.
