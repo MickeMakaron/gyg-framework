@@ -12,6 +12,7 @@ Note that gyg-framework
 Features include:
 * URL parsing
 * MVC-like rendering
+* URL shortcuts
 
 ##Setup
 * Extract into the website's root directory.
@@ -53,3 +54,20 @@ To use gyg-framework's rendering, in your model file, simply set the path of you
 and include gyg-framework's render path at the end.
 
     include(GYG_RENDER_PATH);
+    
+    
+##Shortcuts
+To avoid lengthy URLs, gyg-framework can associate a request URI to a shortcut ID. Have, for example, a page with the following request URI:
+
+	?controller/page/arg1
+can be shortened to:
+
+	?shortcutID
+
+To do this, simply add the following to gyg's shortcut array in gyg's config file:
+
+	'shortcutID' => ['enabled' => true, 'path' => 'controller/page/arg1']
+
+Now gyg-framework will interpret "?shortcutID" as "?controller/page/arg1". Note, however,
+that shortcuts have lower priority than controllers. If an enabled shortcut and controller share
+the same ID, gyg-framework will prioritize the controller. Thus, try to use unique IDs.
