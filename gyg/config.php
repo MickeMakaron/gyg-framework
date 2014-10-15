@@ -22,7 +22,7 @@ ini_set('output_buffering', 0);   // Do not buffer outputs, write directly
  * BASE_URL
  * The base URL of your site.
  */
-define('BASE_URL', "");
+define('BASE_URL', "http://getyourgame.se/");
 
 /*
  *
@@ -36,7 +36,7 @@ define('BASE_URL', "");
  * instead of this:
  * 		www.site.com?controller/page/arg1/arg2...
  */
-define('GYG_DEFAULT_CONTROLLER', 'example');
+define('GYG_DEFAULT_CONTROLLER', 'gyg');
 
 /*******************************************/
 
@@ -86,18 +86,68 @@ $gyg = [];
  * as the controller's index. Additionally, the folder must contain 
  * a PHP-file named "main". 
  * For example, if you want to create a new controller
- * named "banana" with a page called "monkey", the page's main PHP-file must
+ * named "banana", the controller's main PHP-file must
  * have the following path structure:
- * "controllers/banana/pages/monkey/monkey.php".
- * The controller's main file would look like this:
- * "controllers/banana/main.php"
+ * 		controllers/banana/main.php
  *
+ * When registering a new controller, you must
+ * add it to the $gyg['controllers'] array in the following
+ * manner:
+ * 		'controllerId' => ['enabled' => true]
+ * The 'enabled' property is for easy disabling of controllers,
+ * without having to completely remove them from the whitelist.
+ * A disabled controller is inaccessible and will be regarded
+ * by gyg-framework as not whitelisted.
+ *
+ * Whitelisting a controller without following the above structure
+ * will cause gyg-framework to throw exceptions.
  */
 $gyg['controllers'] = 
 [
-	'example' 	=> ['enabled' => true],
+	'gyg' 		=> ['enabled' => true],
 	'file'		=> ['enabled' => true]
 ];
+
+
+/*
+ * Shortcuts!
+ * 
+ * If you want a page request to be accessible by a keyword,
+ * you can define it here. 
+ *
+ * For example, if you want to access a blog named "Cooking Mania" 
+ * without having to go through this potentially lengthy request:
+ * 		site.com?controller/cooking-mania
+ * you can set a shortcut to it, allowing you to access it
+ * through this request:
+ *		site.com?cooking-mania
+ *
+ * To register a shortcut, add it to the $gyg['shortcuts'] array in
+ * this form:
+ * 		'shortcutId' => ['enabled' => true, 'path' => 'controller/page/arg1/arg2/...']
+ * 
+ * The 'enabled' property is for easy disabling of shortcuts,
+ * without having to completely remove them from the whitelist.
+ * A disabled shortcut is inaccessible and will be regarded
+ * by gyg-framework as not registered.
+ * 
+ * The 'path' property is the page's real request URI.
+ *
+ * Whitelisting a shortcut without following the above structure
+ * will cause gyg-framework to throw exceptions.
+ * 
+ * NOTE: A shortcut has lower priority than a controller. If a shortcut has
+ * the same ID as a whitelisted controller, gyg-framework will route to
+ * the controller, instead of the shortcut. Thus, make sure to use unique
+ * IDs.
+ */
+$gyg['shortcuts'] =
+[
+	'file1' => ['enabled' => true, 'path' => ''],
+];
+ 
+
+
 
 /*
  * Define paths.
