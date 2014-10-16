@@ -18,7 +18,7 @@ Features include:
 * Extract into the website's root directory.
 * Set the mandatory configuration options in "gyg/config.php".
 * Done!
-
+ 
 
 ##URL parsing
 The gyg-framework is a very basic framework for MVC- and web development. The framework allows the user to 
@@ -37,6 +37,7 @@ That's it! The controller alone decides how to interpret remaining arguments. Th
 The workflow within a controller usually looks like this:
 1. The controller interprets the page argument ($gyg['page']) and redirects to a page.
 2. The page interprets the remaining arguments ($gyg['args']) and does something with them.
+
 
 ##Rendering
 Additionally, the gyg-framework offers an MVC-structured rendering model. This is entirely located in the page. To make use of it, the page's file
