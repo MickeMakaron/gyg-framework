@@ -1,4 +1,4 @@
-gyg-framework
+![gyg-framework](controllers/gyg/img/gyg.png) gyg-framework
 =============
 ##Introduction
 gyg-framework is a very simple and lightweight framework for easy setup of controllers and pretty URLs. It's essentially an
