@@ -165,7 +165,7 @@ $gyg['controllers'] =
  */
 $gyg['shortcuts'] =
 [
-	'shortcut' => ['enabled' => true, 'path' => ''],
+	'file1' => ['enabled' => true, 'path' => ''],
 ];
  
 
