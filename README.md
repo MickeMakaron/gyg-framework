@@ -5,7 +5,7 @@ gyg-framework is a very simple and lightweight framework for easy setup of contr
 URL parser with some additional features.
 
 Note that gyg-framework
-* does not use .htaccess.
+* does not rely on RewriteRule (but does support it)
 * is fully PHP.
 * has no library dependancies (except standard PHP).
 
