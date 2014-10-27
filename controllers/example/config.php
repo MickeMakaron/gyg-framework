@@ -31,6 +31,8 @@
 // and use it for your controller.
 $gyg['pages'] = // Pages to whitelist
 [
-	'home' => ['enabled' => true],
-	'mars' => ['enabled' => true]
+	'home' 			=> ['enabled' => true],
+	'home-rewrite' 	=> ['enabled' => true],
+	'home-query' 	=> ['enabled' => true],
+	'mars' 			=> ['enabled' => true]
 ];
