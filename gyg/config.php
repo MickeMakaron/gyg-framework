@@ -44,7 +44,7 @@ ini_set('output_buffering', 0);   // Do not buffer outputs, write directly
  * BASE_URL
  * The base URL of your site.
  */
-define('BASE_URL', "http://getyourgame.se/");
+define('BASE_URL', "");
 
 /*
  *
@@ -58,7 +58,7 @@ define('BASE_URL', "http://getyourgame.se/");
  * instead of this:
  * 		www.site.com?controller/page/arg1/arg2...
  */
-define('GYG_DEFAULT_CONTROLLER', 'gyg');
+define('GYG_DEFAULT_CONTROLLER', 'example');
 
 /*******************************************/
 
@@ -101,6 +101,35 @@ $gyg = [];
 
 
 /*
+ * If set to false, gyg-framework will rewrite URLs by
+ * using query strings (the part of the URL after a question mark).
+ * 
+ * If set to true, gyg-framework will rewrite URLs by
+ * using the request URI. When creating a RewriteRule, reroute
+ * all requests  to route.php, like so:
+ *		<Directory path/to/your/website/root>
+ *			RewriteEngine On
+ *			RewriteRule (.*) gyg/route.php?$1 [NC,QSA,L]
+ *		</Directory>			
+ *			
+ *
+ * If you don't know anything about this kind of stuff and/or
+ * don't have access to your web servers settings, keep
+ * it set to false. The upside of RewriteRule, however,
+ * is that you no longer will have a question mark in 
+ * your URLs.
+ *
+ * NOTE: gyg-framework has no control over AccessFileName files
+ * or other directives in your web servers configuration files. 
+ * You must set this up yourself.
+ *
+ * NOTE2: If set to true, URLs linking through the query string
+ * system will not work.
+ */
+$gyg['useRewriteRule'] = false;
+
+
+/*
  * Whitelist of page controllers.
  *
  * When creating a new controller, it must be located in the "controller"
@@ -126,7 +155,7 @@ $gyg = [];
  */
 $gyg['controllers'] = 
 [
-	'example' 		=> ['enabled' => true],
+	'example' 	=> ['enabled' => true],
 	'file'		=> ['enabled' => true]
 ];
 
@@ -165,7 +194,7 @@ $gyg['controllers'] =
  */
 $gyg['shortcuts'] =
 [
-	'file1' => ['enabled' => true, 'path' => ''],
+	'shortcut' => ['enabled' => true, 'path' => ''],
 ];
  
 

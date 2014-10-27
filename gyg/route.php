@@ -58,6 +58,7 @@
  */
 
 
+
 // gyg's standard config file.
 include("config.php");
 
@@ -74,6 +75,31 @@ function parseUri($requestUri)
 	// Get request URI and remove query sign (question mark) and trailing slashes.
 	$requestUri = trim($requestUri, "?\ /");
 
+	
+	// Get the gyg variable into scope.
+	global $gyg;
+	
+	/*
+	 * If using RewriteRule, only use
+	 * the request part behind the first
+	 * occuring "&". 
+	 */
+	if($gyg['useRewriteRule'] === true)
+	{
+		$res = strchr($requestUri, '&');
+		
+		// If no "&" is found, it means the request
+		// is simply "gyg/route.php", which in turn
+		// means that we should go to the default controller.
+		if($res === false)
+		{
+			$gyg['controller'] = GYG_DEFAULT_CONTROLLER;
+			return;
+		}
+		
+		$requestUri = substr($res, 1);
+	}
+	
 	/*
 	 * Split the requestUri into strings and remove all slashes.
 	 * This will always return an array of at least 1 in size.
@@ -81,13 +107,13 @@ function parseUri($requestUri)
 	 */
 	$request = explode("/", $requestUri);
 
+	
 	// The first argument designates the page controller's ID.
 	// $request size is always >= 1. See the comment above.
-	$controllerId = $request[0];
+	$controllerId = isset($request[0]) ? $request[0] : '';
 	
 
-	// Get the gyg variable into scope.
-	global $gyg;
+
 	
 	/*
 	 * If controllerId is empty, it is assumed that the user wants to go to
@@ -148,8 +174,8 @@ $gyg['page'] = null;
 $gyg['args'] = null;
 
 
+parseUri($_SERVER['QUERY_STRING']);
 
-parseUri($_SERVER['REQUEST_URI']);
 
 
 $controllerPath = GYG_CONTROLLERS_PATH . "{$gyg['controller']}/";

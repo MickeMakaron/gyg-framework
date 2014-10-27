@@ -34,14 +34,47 @@ Class gyg
 	 * Create a pretty file URL.
 	 * If the file lies in the controller's directory, only pass the controller.
 	 * If the file lies in the page's directory, pass both controller and page.
+	 *
+	 * This function works with $gyg['useRewriteRule'] set to both true and false.
 	 */
 	static function createFileUrl($filePath, $controller, $page = null)
 	{
+		global $gyg;
+		
+		$url = null;
 		if($page === null)
-			return BASE_URL . "?file/{$controller}/{$filePath}";
+			$url = "file/{$controller}/{$filePath}";
 		else
-			return BASE_URL . "?file/{$controller}/{$page}/{$filePath}";
+			$url = "file/{$controller}/{$page}/{$filePath}";
+		
+		if($gyg['useRewriteRule'] === true)
+			return BASE_URL . $url;
+		else
+			return "?" . $url;
 	}
+	
+	/*
+	 * Create a pretty URL to a webpage. 
+	 * This function is only useful for when you want
+	 * a link to be compatible with $gyg['useRewriteRule'] set
+	 * to both true and false.
+	 *
+	 * Input will be interpreted as follows:
+	 *		controller/page/arg1/arg2/arg3/...
+	 */
+	static function url($request)
+	{
+		global $gyg;
+		
+		$request = trim($request, "?\ /");
+		
+		if($gyg['useRewriteRule'] === true)
+			return BASE_URL . $request;
+		else
+			return "?" . $request;
+	
+	}
+	
 
 	// Whine about lost stuff and then go die.
 	static function throw404()
