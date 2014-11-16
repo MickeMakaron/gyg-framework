@@ -72,7 +72,7 @@ function parseUri($requestUri)
 		throw new Exception('Default controller is not properly whitelisted or disabled.');
 
 	
-	// Get request URI and remove query sign (question mark) and trailing slashes.
+	// Get request URI and remove trailing query sign (question mark) and slashes.
 	$requestUri = trim($requestUri, "?\ /");
 
 	
@@ -80,12 +80,50 @@ function parseUri($requestUri)
 	global $gyg;
 	
 	/*
-	 * If using RewriteRule, only use
-	 * the request part behind the first
-	 * occuring "&". 
+	 * If using RewriteRule, we need
+	 * to separate the request string
+	 * and the appending query string.
+	 *
+	 * Additionally, remove the base url from the request.
 	 */
 	if($gyg['useRewriteRule'] === true)
 	{
+		$res = strchr($requestUri, '?');
+		
+		if($res !== false)
+		{
+			$requests = explode('?', $requestUri);
+			
+
+			$requestUri = $requests[0];
+			$gyg['query'] = $requests[1];
+		}
+		
+		$baseParts = trim(BASE_URL, '/');
+		$baseParts = explode('/', $baseParts);
+		$request = explode('/', $requestUri);
+		
+		$iRequest = 0;
+		$iBaseParts = count($baseParts) - 1;
+		
+		/*
+		 * Check if the end of the baseu rl is equal to the beginning of
+		 * the request url. If they are, unset it and continue iterating forwards in $request
+		 * and backwards in $baseParts.
+		 */
+		while(	$iBaseParts >= 0 && 
+				$iRequest < count($request) && 
+				$baseParts[$iBaseParts] === $request[$iRequest])
+		{
+			unset($request[$iRequest]);
+			$iBaseParts--;
+			$iRequest++;
+		}
+		
+		// Reindex the array.
+		$request = array_values($request);
+		
+		/*
 		$res = strchr($requestUri, '&');
 		
 		// If no "&" is found, it means the request
@@ -97,15 +135,32 @@ function parseUri($requestUri)
 			return;
 		}
 		
+		// Set requestUri to the string behind the first "&".
 		$requestUri = substr($res, 1);
+		
+		// If another "&" is found, it must originally be the query sign that
+		// has been converted during the rewrite.
+		$res = strchr($requestUri, '&');
+		if($res !== false)
+		{
+			// Set query string to gyg's query variable and
+			// remove it from the requestUri.
+			$gyg['query'] = substr($res, 1);
+			$requestUri = str_replace($gyg['query'], '', $requestUri);
+		}
+			
+		*/
+		
 	}
-	
-	/*
-	 * Split the requestUri into strings and remove all slashes.
-	 * This will always return an array of at least 1 in size.
-	 * If $requestUri is empty it will return [0] => "".
-	 */
-	$request = explode("/", $requestUri);
+	else
+	{
+		/*
+		 * Split the requestUri into strings and remove all slashes.
+		 * This will always return an array of at least 1 in size.
+		 * If $requestUri is empty it will return [0] => "".
+		 */
+		$request = explode("/", $requestUri);
+	}
 
 	
 	// The first argument designates the page controller's ID.
@@ -113,8 +168,6 @@ function parseUri($requestUri)
 	$controllerId = isset($request[0]) ? $request[0] : '';
 	
 
-
-	
 	/*
 	 * If controllerId is empty, it is assumed that the user wants to go to
 	 * the default controller. Empty arguments in the middle of the request
@@ -125,7 +178,7 @@ function parseUri($requestUri)
 		$gyg['controller'] = GYG_DEFAULT_CONTROLLER;
 		return;
 	}
-
+	
 	/*
 	 * If a user-given controller ID doesn't exist it is assumed that the user 
 	 * either wants to access a shortcut to a page or access a page within 
@@ -173,8 +226,9 @@ $gyg['controller'] = null;
 $gyg['page'] = null;
 $gyg['args'] = null;
 
-
-parseUri($_SERVER['QUERY_STRING']);
+// If using RewriteRule, use the request uri, else use the query string.
+$uri = ($gyg['useRewriteRule'] === true) ? $_SERVER['REQUEST_URI'] : $_SERVER['QUERY_STRING'];
+parseUri($uri);
 
 
 
@@ -186,4 +240,5 @@ if(file_exists($controllerPath . "config.php"))
 
 // Include the controller's main PHP-file.
 // For explanation of the file path structure, see gyg's config.
+
 include($controllerPath . "main.php");
