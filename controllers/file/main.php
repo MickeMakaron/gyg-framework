@@ -3,7 +3,7 @@
 ****************************************************************
 *
 * gyg-framework - Basic framework for web development
-* Copyright (C) 2014 Mikael Hernvall (mikael.hernvall@gmail.com)
+* Copyright (C) 2014 Mikael Hernvall (mikael@hernvall.com)
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -53,12 +53,18 @@ $argCount = $request['argCount'];
 
 // We need at least the controller and something else pointing to a file.
 if($argCount < 2)
-	httpStatus::send('404');
+{
+	header('HTTP/1.0 404 Not Found');
+	exit();
+}
 
 
 $controller = $request['args'][0];
-if(!$gyg->controllerIsEnabled($controller))
-	httpStatus::send('404');
+if(!$gyg->controllerIsWhitelisted($controller))
+{
+	header('HTTP/1.0 404 Not Found');
+	exit();
+}
 
 $filePath = $gyg->getControllersPath() .'/'. implode('/', $request['args']);
 
