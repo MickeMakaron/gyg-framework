@@ -11,59 +11,94 @@ Note that gyg-framework
 
 Features include:
 * File-handling
-* Whitelisting
 * Shortcuts
-* Default controller
 
 ##Setup
-* Install files anywhere.
-* Declare gyg-framework object and configure its settings. Here follows a version of [Playhouse](http://mikael.hernvall.com/playhouse "Playhouse") as example:
+Install files anywhere. Put contents of _controllers_ directory into user-defined _controllersPath_ (see below).
 
-    <$gyg = new GygFramework($root, $baseUrl, $defaultController);>
+Declare gyg-framework object and configure its settings. Here follows a version of [Playhouse](http://mikael.hernvall.com/playhouse "Playhouse") as an example:
+
+    $gyg = new GygFramework($controllersPath, $baseUrl, $defaultController);
+    $gyg->useRewriteRule($useRewriteRule);
+    $gyg->whitelistControllers($controllers);
+    $gyg->whitelistShortcuts($shortcuts);
     
-    <$gyg->useRewriteRule($useRewriteRule);>
+* _controllersPath_ is the path to the controllers directory. For controller setup, see **Controller setup** below.
+* _baseUrl_ is the base URL of the website that gyg-framework is to work in.
+* _defaultController_ is the name of the controller to route to when the URI request does not point to a whitelisted controller.
+* _useRewriteRule_ sets whether to use URL-rewriting or not.
+* _controllers_ names of controllers to whitelist.
+* _shortcuts_ shortcuts to whitelist.
+
+
+Done!
+
+###Controller setup
+####Whitelisting
+gyg-framework will only route to a controller if it is whitelisted using _whitelistController_ or _whitelistControllers_. To whitelist a controller, simply call _whitelistController_ with the controller's name as argument.
+
+    $gyg->whitelistController('myController');
+
+####File structure
+The controller must strictly adhere to two rules. First, the controller's files must be located in a folder below the _controllersPath_ defined when constructing the _GygFramework_ object. The folder name must be identical to the string used when whitelisting the controller. 
     
-    <$gyg->whitelistControllers($controllers);>
+    controllersPath/controllerName/
     
-    <$gyg->whitelistShortcuts($shortcuts);>
+Second, in the controller's directory, there must exist a file called _main.php_. This file is what gyg-framework will route to.
+
+##Features
+###URL parsing
+The gyg-framework is a very basic URL parser. The framework allows the user to 
+create individual front-controllers with absolute freedom. During this section it is assumed that _useRewriteRule_ is set to true. The workflow is as follows:
+
+User accesses site by the URL below.
+
+    www.site.com/controller/arg1/arg2...
+
+Parse the request URI
+
+    /controller/arg1/arg2
+
+into 
+
+    $request['controller'] = controller;
+    $request['args'] = [arg1, arg2, ...];
+
+If controller is whitelisted and its main file exists, return the path to its main file. If controller is not whitelisted, return the path to default controller's main file.
+
+That's it! The controller alone decides how to interpret remaining arguments.
+
+###File-handling
+The file-handling depends on the _file_ controller that comes with gyg-framework. Thus, make sure the _file_ controller is installed and whitelisted (see **Controller setup**.)
+
+In short, the gyg-framework can convert local file paths to URLs, using _path2url_. Converting the path
     
-* Done!
-
-
-
-
-##URL parsing
-The gyg-framework is a very basic framework for MVC- and web development. The framework allows the user to 
-create individual front-controllers with their own pages and argument interpretation. The workflow is as follows:
-
-Example URL: www.site.com?controller/page/arg1/arg2...
-
-1. Parse the query string "?controller/page/arg1/arg2..." into an array of the following structure:
-  * $gyg['controller'] = controller
-  * $gyg['page'] = page
-  * $gyg['args'] = [arg1, arg2, ...]
-	
-2. Redirect to the controller and let it interpret the remaining arguments.
-
-That's it! The controller alone decides how to interpret remaining arguments. This means there is complete freedom when creating a controller.
-The workflow within a controller usually looks like this:
-1. The controller interprets the page argument ($gyg['page']) and redirects to a page.
-2. The page interprets the remaining arguments ($gyg['args']) and does something with them.
-
-
+    webroot/controllers/controller/img.jpg
     
-##Shortcuts
-To avoid lengthy URLs, gyg-framework can associate a request URI to a shortcut ID. Have, for example, a page with the following request URI:
+assuming _controllersPath_ is set to _webroot/controllers_, will result in
+    
+    baseUrl/file/controller/img.jpg
+    
+_path2url_ is essentially converting a file path located in a controller's directory into a request URI that points to a path relative to _controllersPath_. Note that 
 
-	?controller/page/arg1
+    baseUrl/file/
+    
+will always be the prefix of the resulting URL.
+
+###Shortcuts
+To avoid lengthy URLs, gyg-framework can associate a request URI to a shortcut ID. For example, a page with the request URI
+
+	controller/page/arg1
 can be shortened to:
 
-	?shortcutID
+	shortcutID
 
-To do this, simply add the following to gyg's shortcut array in gyg's config file:
+To do this, simply whitelist the _shortcutID_ using _whitelistShortcuts_.
 
-	'shortcutID' => ['enabled' => true, 'path' => 'controller/page/arg1']
+    $gyg->whitelistShortcuts(['shorcutID' => 'requestURI']);
+    
+Note that the shortcut data must be formatted like an array, where the key is the shortcut's ID and the value is the real request URI it points to.
 
-Now gyg-framework will interpret "?shortcutID" as "?controller/page/arg1". Note, however,
-that shortcuts have lower priority than controllers. If an enabled shortcut and controller share
+Now gyg-framework will interpret "shortcutID" as "controller/page/arg1". Note, however,
+that shortcuts have lower priority than controllers. If a whitelisted shortcut and controller share
 the same ID, gyg-framework will prioritize the controller. For this reason, try to use unique IDs.
