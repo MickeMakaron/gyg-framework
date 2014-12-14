@@ -93,11 +93,11 @@ can be shortened to:
 
 	shortcutID
 
-To do this, simply whitelist the _shortcutID_ using _whitelistShortcuts_.
+To do this, simply whitelist the _shortcutID_ using _whitelistShortcut_.
 
-    $gyg->whitelistShortcuts(['shorcutID' => 'requestURI']);
+    $gyg->whitelistShortcut($shorcutID, $requestURI);
     
-Note that the shortcut data must be formatted like an array, where the key is the shortcut's ID and the value is the real request URI it points to.
+If using _whitelistShortcuts_, note that the shortcut data must be formatted like an array whose keys are the shortcuts' IDs and the values are the real request URIs they point to.
 
 Now gyg-framework will interpret "shortcutID" as "controller/page/arg1". Note, however,
 that shortcuts have lower priority than controllers. If a whitelisted shortcut and controller share
