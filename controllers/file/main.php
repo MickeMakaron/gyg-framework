@@ -68,6 +68,13 @@ if(!$gyg->controllerIsWhitelisted($controller))
 
 $filePath = $gyg->getControllersPath() .'/'. implode('/', $request['args']);
 
+include("extensionsWhitelist.php");
+if(!in_array(pathinfo($filePath)['extension'], $extensionsWhitelist))
+{
+	header('HTTP/1.0 404 Not Found');
+	exit();
+}
+
 $imgInfo = getimagesize($filePath);
 $mime = $imgInfo['mime'];
 header('Content-type: ' . $mime);  
