@@ -3,7 +3,7 @@
  ****************************************************************
  * 
  * gyg-framework - Basic framework for web development
- * Copyright (C) 2014 Mikael Hernvall (mikael.hernvall@gmail.com)
+ * Copyright (C) 2014 Mikael Hernvall (mikael@hernvall.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,26 +22,25 @@
  ****************************************************************/
 
 
- // Enclose functions in gyg namespace.
-Class gyg
+Class GygFramework
 {
-	static private $useRewriteRule = true;
+	private $useRewriteRule;
 	
 	// Whitelists
-	static private $controllers;
-	static private $pages;
-	static private $shortcuts;
+	private $controllers;
+	private $pages;
+	private $shortcuts;
 	
 	// DEFAULT CONTROLLER
-	static private $defaultController;
+	private $defaultController;
 	
 	// Store the request for future use.
-	static private $request;
+	private $request;
 	
 	// ROOT, BASE_URL, CONTROLLERS PATH
-	static private $root;
-	static private $baseUrl;
-	static private $controllersPath;
+	private $root;
+	private $baseUrl;
+	private $controllersPath;
 	
 	/**
 	 * Initialize gyg-framework variables.
@@ -54,17 +53,17 @@ Class gyg
 	 * defaultController, 	string - ID of default
 	 * controller to route to.
 	 */
-	static function init($root, $baseUrl, $defaultController)
+	public function __construct($root, $baseUrl, $defaultController)
 	{
-		self::$defaultController = $defaultController;
-		self::initPaths($root, $baseUrl);
+		$this->defaultController = $defaultController;
+		$this->initPaths($root, $baseUrl);
 		
-		self::$useRewriteRule 	= true;
-		self::$controllers 		= [];
-		self::$pages 			= [];
-		self::$shortcuts		= [];
+		$this->useRewriteRule 	= true;
+		$this->controllers 		= [];
+		$this->pages 			= [];
+		$this->shortcuts		= [];
 
-		self::setRequest();
+		$this->setRequest();
 	}
 
 	/**
@@ -77,11 +76,11 @@ Class gyg
 	 * gyg-framework will interpret all requests 
 	 * relative to this URL path.
 	 */
-	static private function initPaths($root, $baseUrl)
+	private function initPaths($root, $baseUrl)
 	{
-		self::$root 			= realpath($root) . '/';
-		self::$baseUrl 			= $baseUrl;
-		self::$controllersPath	= self::$root . 'controllers/';
+		$this->root 			= realpath($root) . '/';
+		$this->baseUrl 			= $baseUrl;
+		$this->controllersPath	= $this->root . 'controllers/';
 	}
 	
 	/**
@@ -93,9 +92,9 @@ Class gyg
 	 * has been properly set up, so that the entire request URI 
 	 * can be used for page requests. 
 	 */
-	static function useRewriteRule($flag = true)
+	public function useRewriteRule($flag = true)
 	{
-		self::$useRewriteRule = $flag;
+		$this->useRewriteRule = $flag;
 	}
 	
 	/**
@@ -107,9 +106,9 @@ Class gyg
 	 * PARAMS:
 	 * controllerId, string - ID of controller to be inserted.
 	 */
-	static function whitelistController($controllerId)
+	public function whitelistController($controllerId)
 	{
-		array_push(self::$controllers, $controllerId);
+		array_push($this->controllers, $controllerId);
 	}
 	
 	/**
@@ -118,10 +117,10 @@ Class gyg
 	 * PARAMS:
 	 * controllerIds, string array - Controller IDs to insert.
 	 */
-	static function whitelistControllers($controllerIds)
+	public function whitelistControllers($controllerIds)
 	{
 		foreach($controllerIds as $id)
-			self::whitelistController($id);
+			$this->whitelistController($id);
 	}
 	
 	/**
@@ -134,7 +133,7 @@ Class gyg
 	 * 
 	 * NOTE: gyg-framework handles shortcuts with lower priority 
 	 * than controllers. If a shortcut has the same keyword as a 
-	 * whitelisted controller ID, gyg::routeControl will route to
+	 * whitelisted controller ID, gyg->routeControl will route to
 	 * the controller instead of the shortcut. Thus, make sure to use unique
 	 * keywords for shortcuts.
 	 *
@@ -142,9 +141,9 @@ Class gyg
 	 * shortcutId, 	string - Keyword to access the shortcut by.
 	 * path, 		string - Request URI.
 	 */
-	static function whitelistShortcut($shortcutId, $path)
+	public function whitelistShortcut($shortcutId, $path)
 	{
-		self::$shortcuts[$shortcutId] = $path;
+		$this->shortcuts[$shortcutId] = $path;
 	}
 	
 	
@@ -159,10 +158,10 @@ Class gyg
 	 * where shortcutId is the keyword to access the shortcut
 	 * by, and requestUri is the request URI pointing to a page.
 	 */
-	static function whitelistShortcuts($shortcuts)
+	public function whitelistShortcuts($shortcuts)
 	{
 		foreach($shortcuts as $id => $path)
-			self::whitelistShortcut($id, $path);
+			$this->whitelistShortcut($id, $path);
 	}
 	
 	/**
@@ -171,9 +170,9 @@ Class gyg
 	 * PARAMS:
 	 * pageId, string - ID of page to insert into whitelist.
 	 */
-	static function whitelistPage($pageId)
+	public function whitelistPage($pageId)
 	{
-		array_push(self::$pages, $pageId);
+		array_push($this->pages, $pageId);
 	}
 	
 	/** 
@@ -183,10 +182,10 @@ Class gyg
 	 * pageIds, string array - Array containing IDs of
 	 * pages to insert into whitelist.
 	 */
-	static function whitelistPages($pageIds)
+	public function whitelistPages($pageIds)
 	{
 		foreach($pageIds as $id)
-			self::whitelistPage($id);
+			$this->whitelistPage($id);
 	}
 	
 	/**
@@ -196,19 +195,19 @@ Class gyg
 	 * RETURNS:
 	 * string - Path to main file of requested controller.
 	 */
-	static function routeControl()
+	public function routeControl()
 	{
 		/*
 		 * Parse either the request URI or the query string, depending on
 		 * whether we want use RewriteRule or not.
 		 */
-		$request = self::$useRewriteRule === true ? self::parseRequestUri() : self::parseQueryString();
+		$request = $this->useRewriteRule === true ? $this->parseRequestUri() : $this->parseQueryString();
 
-		// Parse the request into self::$request array.
-		self::parseRequest($request);
+		// Parse the request into $this->request array.
+		$this->parseRequest($request);
 
 		// Return path to main file of requested controller.
-		return self::getControllerMainPath(self::$request['controller']);
+		return $this->getControllerMainPath($this->request['controller']);
 	}
 	
 	/**
@@ -219,9 +218,9 @@ Class gyg
 	 * (args), string array - Array containing request parts
 	 * succeeding controller ID.
 	 */
-	static private function setRequest($controller = '', $args = [])
+	private function setRequest($controller = '', $args = [])
 	{
-		self::$request = 
+		$this->request = 
 		[
 			'controller' 	=> $controller,
 			'args'			=> $args,
@@ -242,9 +241,9 @@ Class gyg
 	 *		'argCount'		=> $argCount,
 	 * ]
 	 */
-	static function getRequest()
+	public function getRequest()
 	{
-		return self::$request;
+		return $this->request;
 	}
 	
 	/**
@@ -254,11 +253,11 @@ Class gyg
 	 * PARAMS:
 	 * request, string array - Parts of request.
 	 */
-	static private function parseRequest($request)
+	private function parseRequest($request)
 	{
 		// First of all, make sure the default controller is enabled.
-		if(!self::controllerIsEnabled(self::$defaultController))
-			throw new Exception('Default controller is not whitelisted. Please whitelist it by using gyg::whitelistController.');
+		if(!$this->controllerIsEnabled($this->defaultController))
+			throw new Exception('Default controller is not whitelisted. Please whitelist it by using gyg->whitelistController.');
 
 
 		// The first argument designates the controller's ID.
@@ -270,7 +269,7 @@ Class gyg
 		// If no controller ID is set. Give control to default controller.
 		if($controllerId === '')
 		{
-			self::setRequest(self::$defaultController);
+			$this->setRequest($this->defaultController);
 			return;
 		}
 				
@@ -279,17 +278,17 @@ Class gyg
 		 * check if there is a shortcut by that ID. If not, let default
 		 * controller interpret request.
 		 */
-		if(!self::controllerIsEnabled($controllerId))
+		if(!$this->controllerIsEnabled($controllerId))
 		{
 			/*
 			 * If shortcut is found. Redo the parsing operation with
 			 * the shortcut's path as request.
 			 */
-			if(self::shortcutIsEnabled($controllerId))
-				self::parseRequest(self::$shortcuts[$controllerId]);
+			if($this->shortcutIsEnabled($controllerId))
+				$this->parseRequest($this->shortcuts[$controllerId]);
 			// If not, let default controller interpret request.
 			else
-				self::setRequest(self::$defaultController, $args);
+				$this->setRequest($this->defaultController, $args);
 			
 			return;
 		}
@@ -299,7 +298,7 @@ Class gyg
 		 * We will not perform any parsing on the remaining arguments.
 		 * That work is left to the controller.
 		 */
-		self::setRequest($controllerId, $args);
+		$this->setRequest($controllerId, $args);
 	}
 	
 	/**
@@ -311,12 +310,12 @@ Class gyg
 	 * RETURNS:
 	 * string array - Parts of exploded request path.
 	 */
-	static private function parseRequestUri()
+	private function parseRequestUri()
 	{	
 		$request = $_SERVER['REQUEST_URI'];
 		
 		// Remove base url from beginning.
-		$request = str_replace(self::getBaseUrl(), '', $request);
+		$request = str_replace($this->getBaseUrl(), '', $request);
 
 		// Remove trailing query sign (question mark) and slashes.
 		$request = trim($request, "?\ /");
@@ -340,7 +339,7 @@ Class gyg
 	 * RETURNS:
 	 * string array - Parts of exploded query string.
 	 */
-	static private function parseQueryString()
+	private function parseQueryString()
 	{
 		$query = $_SERVER['QUERY_STRING'];
 
@@ -366,7 +365,7 @@ Class gyg
 	 * string - Content of output buffer after
 	 * inclusion of $path.
 	 */
-	static function silentInclude($path)
+	public function silentInclude($path)
 	{
 		ob_start();
 		include($path);
@@ -382,7 +381,7 @@ Class gyg
 	 * path, 	string 	- Path to template file.
 	 * (vars), 	array	- Variables used in template file.
 	 */
-	static function render($path, $vars = [])
+	public function render($path, $vars = [])
 	{
 		extract($vars);
 		include($path);
@@ -399,61 +398,61 @@ Class gyg
 	 * string - Path to main file of controller by the id
 	 * given in parameter.
 	 */
-	static private function getControllerMainPath($controllerId)
+	private function getControllerMainPath($controllerId)
 	{
-		return self::$controllersPath . $controllerId . '/main.php';
+		return $this->controllersPath . $controllerId . '/main.php';
 	}
 
 
 	/**
 	 * Check if controller is enabled by checking
 	 * if it has been inserted into the 
-	 * controller whitelist using gyg::whitelistController.
+	 * controller whitelist using gyg->whitelistController.
 	 *
 	 * PARAMS:
 	 * controllerId, string - Controller ID as defined when
-	 * whitelisting the controller using gyg::whitelistController
+	 * whitelisting the controller using gyg->whitelistController
 	 *
 	 * RETURN:
 	 * bool - True if controller ID exists in whitelist, else false.
 	 */
-	static function controllerIsEnabled($controllerId)
+	public function controllerIsEnabled($controllerId)
 	{
-		return in_array($controllerId, self::$controllers);
+		return in_array($controllerId, $this->controllers);
 	}
 	
 	/**
 	 * Check if page is enabled by checking
 	 * if it has been inserted into the 
-	 * page whitelist using gyg::whitelistPage.
+	 * page whitelist using gyg->whitelistPage.
 	 *
 	 * PARAMS:
 	 * pageid, string - Page ID as defined when
-	 * whitelisting the page using gyg::whitelistPage
+	 * whitelisting the page using gyg->whitelistPage
 	 *
 	 * RETURN:
 	 * bool - True if page ID exists in whitelist, else false.
 	 */
-	static function pageIsEnabled($pageId)
+	public function pageIsEnabled($pageId)
 	{
-		return in_array($pageId, self::$pages);
+		return in_array($pageId, $this->pages);
 	}
 	
 	/**
 	 * Check if shortcut is enabled by checking
 	 * if it has been inserted into the 
-	 * shortcut whitelist using gyg::whitelistShortcut.
+	 * shortcut whitelist using gyg->whitelistShortcut.
 	 *
 	 * PARAMS:
 	 * pageid, string - Shortcut ID as defined when
-	 * whitelisting the shortcut using gyg::whitelistShortcut
+	 * whitelisting the shortcut using gyg->whitelistShortcut
 	 *
 	 * RETURN:
 	 * bool - True if shortcut ID exists in whitelist, else false.
 	 */
-	static function shortcutIsEnabled($shortcutId)
+	public function shortcutIsEnabled($shortcutId)
 	{
-		return isset(self::$shortcuts[$shortcutId]);
+		return isset($this->shortcuts[$shortcutId]);
 	}
 
 	/**
@@ -462,7 +461,7 @@ Class gyg
 	 * RETURNS:
 	 * string - Base URL path as defined by user.
 	 */
-	static function getBaseUrl()		{return self::$baseUrl;}
+	public function getBaseUrl()		{return $this->baseUrl;}
 	
 	/**
 	 * Get gyg-framework's root variable.
@@ -470,7 +469,7 @@ Class gyg
 	 * RETURNS:
 	 * string - Path to root as defined by user.
 	 */
-	static function getRoot()			{return self::$root;}
+	public function getRoot()			{return $this->root;}
 	
 	/**
 	 * Get path to controllers directory.
@@ -478,7 +477,7 @@ Class gyg
 	 * RETURNS:
 	 * string - Path to controllers directory.
 	 */
-	static function getControllersPath(){return self::$controllersPath;}
+	public function getControllersPath(){return $this->controllersPath;}
 	
 	
 	/**
@@ -490,7 +489,7 @@ Class gyg
 	 * RETURNS:
 	 * string - URL path pointing to the file through the file controller.
 	 */
-	static function path2url($filePath)
+	public function path2url($filePath)
 	{
 		$originalFilePath = $filePath;
 	
@@ -498,7 +497,7 @@ Class gyg
 		$filePath = realpath($filePath);
 
 		// Remove ROOT from file path.
-		$filePath = str_replace(self::getRoot(), '', $filePath);
+		$filePath = str_replace($this->getRoot(), '', $filePath);
 		
 		// Remove trailing slashes.
 		$filePath = trim($filePath, '/');
@@ -511,8 +510,8 @@ Class gyg
 		
 		
 		// Only allow linking to directories below controllers directory.
-		if($pathArray[0] !== basename(self::getControllersPath()))
-			throw new Exception('gyg::path2url (main.php): Invalid path: "' . $originalFilePath . '". Only files below "controllers" directory allowed.');
+		if($pathArray[0] !== basename($this->getControllersPath()))
+			throw new Exception('gyg->path2url (main.php): Invalid path: "' . $originalFilePath . '". Only files below "controllers" directory allowed.');
 			
 		unset($pathArray[0]);
 
@@ -520,7 +519,7 @@ Class gyg
 		$url = "/file/" . implode('/', $pathArray);
 		
 		// If not using RewriteRule, simply prepend a query sign.
-		if(self::$useRewriteRule === false)
+		if($this->useRewriteRule === false)
 			$url = '?' . $url;
 			
 		return $url;
