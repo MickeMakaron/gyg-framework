@@ -37,27 +37,27 @@ Class GygFramework
 	// Store the request for future use.
 	private $request;
 	
-	// ROOT, BASE_URL, CONTROLLERS PATH
-	private $root;
 	private $baseUrl;
 	private $controllersPath;
 	
 	/**
+	 * \brief Constructor
+	 *
 	 * Initialize gyg-framework variables.
 	 *
-	 * PARAMS:
-	 * root, 				string - Path to
-	 * the directory for gyg-framework to work in.
-	 * baseUrl, 			string - Base URL path
+	 * \param controllersPath string Path to
+	 * the controllers directory.
+	 * \param baseUrl string Base URL path
 	 * of website.
-	 * defaultController, 	string - ID of default
+	 * \param defaultController string ID of default
 	 * controller to route to.
 	 */
-	public function __construct($root, $baseUrl, $defaultController)
+	public function __construct($controllersPath, $baseUrl, $defaultController)
 	{
 		$this->defaultController = $defaultController;
-		$this->initPaths($root, $baseUrl);
 		
+		$this->baseUrl 			= $baseUrl;
+		$this->controllersPath	= rtrim(realpath($controllersPath), '/');
 		$this->useRewriteRule 	= true;
 		$this->controllers 		= [];
 		$this->pages 			= [];
@@ -66,28 +66,11 @@ Class GygFramework
 		$this->setRequest();
 	}
 
-	/**
-	 * Initialize default paths and URLs.
-	 *
-	 * PARAMS:
-	 * root, 	string - Path to site's root directory, as 
-	 * defined by user.
-	 * baseUrl,	string - The base URL path of the site. 
-	 * gyg-framework will interpret all requests 
-	 * relative to this URL path.
-	 */
-	private function initPaths($root, $baseUrl)
-	{
-		$this->root 			= realpath($root) . '/';
-		$this->baseUrl 			= $baseUrl;
-		$this->controllersPath	= $this->root . 'controllers/';
-	}
 	
 	/**
-     * Tell gyg-framework whether to use RewriteRule or not.
+     * \brief Tell gyg-framework whether to use RewriteRule or not.
 	 *
-	 * PARAMS:
-	 * flag, bool - If false, gyg-framework will use the query
+	 * \param flag bool If false, gyg-framework will use the query
 	 * string for page requests. If true, gyg-framework will assume a RewriteRule
 	 * has been properly set up, so that the entire request URI 
 	 * can be used for page requests. 
@@ -98,13 +81,12 @@ Class GygFramework
 	}
 	
 	/**
-	 * Insert controller into whitelist.
+	 * \brief Insert controller into whitelist.
 	 *
-	 * Controller IDs that are not whitelisted will not be
+	 * Controllers that are not whitelisted will not be
 	 * accessible.
 	 *
-	 * PARAMS:
-	 * controllerId, string - ID of controller to be inserted.
+	 * \param controllerId string ID of controller to be whitelisted.
 	 */
 	public function whitelistController($controllerId)
 	{
@@ -112,10 +94,9 @@ Class GygFramework
 	}
 	
 	/**
-	 * Insert controllers into whitelist.
+	 * \brief Insert controllers into whitelist.
 	 *
-	 * PARAMS:
-	 * controllerIds, string array - Controller IDs to insert.
+	 * \param controllerIds string array Controller IDs to insert.
 	 */
 	public function whitelistControllers($controllerIds)
 	{
@@ -124,7 +105,7 @@ Class GygFramework
 	}
 	
 	/**
-	 * Insert shortcut into whitelst.
+	 * \brief Insert shortcut into whitelst.
 	 *
 	 * A whitelisted shortcut will bind a request URI to a 
 	 * keyword. For example, instead of accessing a page
@@ -137,9 +118,8 @@ Class GygFramework
 	 * the controller instead of the shortcut. Thus, make sure to use unique
 	 * keywords for shortcuts.
 	 *
-	 * PARAMS:
-	 * shortcutId, 	string - Keyword to access the shortcut by.
-	 * path, 		string - Request URI.
+	 * \param shortcutId string Keyword to access the shortcut by.
+	 * \param path string Request URI.
 	 */
 	public function whitelistShortcut($shortcutId, $path)
 	{
@@ -149,10 +129,9 @@ Class GygFramework
 	
 	
 	/**
-	 * Insert shortcuts into whitelist.
+	 * \brief Insert shortcuts into whitelist.
 	 *	 
-	 * PARAMS:
-	 * shortcuts, array - Array containing shortcut elements
+	 * \param shortcuts array Array containing shortcut elements
 	 * in the following format:
 	 * 		'shortcutId' => 'requestUri'
 	 * where shortcutId is the keyword to access the shortcut
@@ -165,10 +144,9 @@ Class GygFramework
 	}
 	
 	/**
-	 * Insert page into whitelist.
+	 * \brief Insert page into whitelist.
 	 * 
-	 * PARAMS:
-	 * pageId, string - ID of page to insert into whitelist.
+	 * \param pageId string ID of page to insert into whitelist.
 	 */
 	public function whitelistPage($pageId)
 	{
@@ -176,10 +154,9 @@ Class GygFramework
 	}
 	
 	/** 
-	 * Insert pages into whitelist.
+	 * \brief Insert pages into whitelist.
 	 * 
-	 * PARAMS:
-	 * pageIds, string array - Array containing IDs of
+	 * \param pageIds string array Array containing IDs of
 	 * pages to insert into whitelist.
 	 */
 	public function whitelistPages($pageIds)
@@ -189,11 +166,12 @@ Class GygFramework
 	}
 	
 	/**
-	 * Parse request, extract path to controller's
-	 * main file from parsing output and include it.
+	 * \brief Route control to controller
 	 *
-	 * RETURNS:
-	 * string - Path to main file of requested controller.
+	 * Parse request, extract path to controller's
+	 * main file from parsing output and return it.
+	 *
+	 * \return string Path to main file of requested controller.
 	 */
 	public function routeControl()
 	{
@@ -211,11 +189,10 @@ Class GygFramework
 	}
 	
 	/**
-	 * Set gyg-framework's request variable.
+	 * \brief Set gyg-framework's request variable.
 	 *
-	 * PARAMS:
-	 * (controllerId), string - ID of controller.
-	 * (args), string array - Array containing request parts
+	 * \param controllerId string ID of controller.
+	 * \param args string array Array containing request parts
 	 * succeeding controller ID.
 	 */
 	private function setRequest($controller = '', $args = [])
@@ -229,10 +206,9 @@ Class GygFramework
 	}
 	
 	/**
-	 * Get gyg-framework's request variable.
+	 * \brief Get gyg-framework's request variable.
 	 *
-	 * RETURNS:
-	 * string array - Array containing controller ID, request parts
+	 * \param string array Array containing controller ID, request parts
 	 * succeeding controller ID and the count of these parts in the
 	 * following format:
 	 * [
@@ -247,16 +223,15 @@ Class GygFramework
 	}
 	
 	/**
-	 * Interpret request and set gyg-framework's
+	 * \brief Interpret request and set gyg-framework's
 	 * request variable accordingly.
 	 *
-	 * PARAMS:
-	 * request, string array - Parts of request.
+	 * \param request string array Parts of request.
 	 */
 	private function parseRequest($request)
 	{
 		// First of all, make sure the default controller is enabled.
-		if(!$this->controllerIsEnabled($this->defaultController))
+		if(!$this->controllerIsWhitelisted($this->defaultController))
 			throw new Exception('Default controller is not whitelisted. Please whitelist it by using gyg->whitelistController.');
 
 
@@ -278,13 +253,13 @@ Class GygFramework
 		 * check if there is a shortcut by that ID. If not, let default
 		 * controller interpret request.
 		 */
-		if(!$this->controllerIsEnabled($controllerId))
+		if(!$this->controllerIsWhitelisted($controllerId))
 		{
 			/*
 			 * If shortcut is found. Redo the parsing operation with
 			 * the shortcut's path as request.
 			 */
-			if($this->shortcutIsEnabled($controllerId))
+			if($this->shortcutIsWhitelisted($controllerId))
 				$this->parseRequest($this->shortcuts[$controllerId]);
 			// If not, let default controller interpret request.
 			else
@@ -302,13 +277,14 @@ Class GygFramework
 	}
 	
 	/**
+	 * \brief Extract request path from request URI
+	 *
 	 * Extract request path from request URI by 
 	 * removing base URL path, query string and trimming 
 	 * away query trailing URL symbols. Explode result 
 	 * into array, using slashes as separators.
 	 *
-	 * RETURNS:
-	 * string array - Parts of exploded request path.
+	 * \return string array Parts of exploded request path.
 	 */
 	private function parseRequestUri()
 	{	
@@ -331,13 +307,14 @@ Class GygFramework
 	}
 	
 	/**
+	 * \brief Parse query string
+	 * 
 	 * Clean up query string by trimming away
 	 * trailing URL symbols and exploding
 	 * result into array, using slashes as
 	 * separators.
 	 *
-	 * RETURNS:
-	 * string array - Parts of exploded query string.
+	 * \return string array Parts of exploded query string.
 	 */
 	private function parseQueryString()
 	{
@@ -355,14 +332,11 @@ Class GygFramework
 	}
 	
 	/**
-	 * Include a file silently by saving it
-	 * in the output buffer.
+	 * \brief Include a file into buffer.
 	 *
-	 * PARAMS:
-	 * path, string - Path to file to include.
+	 * \param path string Path to file to include.
 	 *
-	 * RETURNS:
-	 * string - Content of output buffer after
+	 * \return string Content of output buffer after
 	 * inclusion of $path.
 	 */
 	public function silentInclude($path)
@@ -373,121 +347,109 @@ Class GygFramework
 	}
 	
 	/**
-	 * Render a template file by performing
-	 * extract on its variables and then include
-	 * file.
+	 * \brief Render a template file 
 	 *
-	 * PARAMS:
-	 * path, 	string 	- Path to template file.
-	 * (vars), 	array	- Variables used in template file.
+	 * \param path string Path to template file.
+	 * \param vars array Variables used in template file.
 	 */
 	public function render($path, $vars = [])
-	{
+	{	
 		extract($vars);
 		include($path);
 	}
 
 	/**
-	 * Get path to a controller's main file, assuming
-	 * it exists.
+	 * \brief Get path to a controller's main file.
 	 *
-	 * PARAMS:
-	 * controllerId, string - ID of controller.
+	 * \param controllerId string ID of controller.
 	 *
-	 * RETURNS:
-	 * string - Path to main file of controller by the id
+	 * \return string Path to main file of controller by the id
 	 * given in parameter.
 	 */
 	private function getControllerMainPath($controllerId)
 	{
-		return $this->controllersPath . $controllerId . '/main.php';
+		return $this->controllersPath .'/'. $controllerId . '/main.php';
 	}
 
 
 	/**
-	 * Check if controller is enabled by checking
+	 * \brief Check if controller is whitelisted.
+	 *
+	 * Check if controller is whitelisted by checking
 	 * if it has been inserted into the 
 	 * controller whitelist using gyg->whitelistController.
 	 *
-	 * PARAMS:
-	 * controllerId, string - Controller ID as defined when
+	 * \param controllerId string Controller ID as defined when
 	 * whitelisting the controller using gyg->whitelistController
 	 *
-	 * RETURN:
-	 * bool - True if controller ID exists in whitelist, else false.
+	 * \return bool True if controller ID exists in whitelist, else false.
 	 */
-	public function controllerIsEnabled($controllerId)
+	public function controllerIsWhitelisted($controllerId)
 	{
 		return in_array($controllerId, $this->controllers);
 	}
 	
 	/**
+	 * \brief Check if page is whitelisted. 
+	 *
 	 * Check if page is enabled by checking
 	 * if it has been inserted into the 
 	 * page whitelist using gyg->whitelistPage.
 	 *
-	 * PARAMS:
-	 * pageid, string - Page ID as defined when
+	 * \param pageid string Page ID as defined when
 	 * whitelisting the page using gyg->whitelistPage
 	 *
 	 * RETURN:
 	 * bool - True if page ID exists in whitelist, else false.
 	 */
-	public function pageIsEnabled($pageId)
+	public function pageIsWhitelisted($pageId)
 	{
 		return in_array($pageId, $this->pages);
 	}
 	
 	/**
-	 * Check if shortcut is enabled by checking
+	 * \brief Check if shortcut is whitelisted.
+	 *
+	 * Check if shortcut is whitelisted by checking
 	 * if it has been inserted into the 
 	 * shortcut whitelist using gyg->whitelistShortcut.
 	 *
-	 * PARAMS:
-	 * pageid, string - Shortcut ID as defined when
+	 * \param pageid string Shortcut ID as defined when
 	 * whitelisting the shortcut using gyg->whitelistShortcut
 	 *
-	 * RETURN:
-	 * bool - True if shortcut ID exists in whitelist, else false.
+	 * \return bool True if shortcut ID exists in whitelist, else false.
 	 */
-	public function shortcutIsEnabled($shortcutId)
+	public function shortcutIsWhitelisted($shortcutId)
 	{
 		return isset($this->shortcuts[$shortcutId]);
 	}
 
 	/**
-	 * Get gyg-framework's base URL path variable.
+	 * \brief Get gyg-framework's base URL path variable.
 	 *
-	 * RETURNS:
-	 * string - Base URL path as defined by user.
+	 * \return string Base URL path as defined by user.
 	 */
 	public function getBaseUrl()		{return $this->baseUrl;}
 	
-	/**
-	 * Get gyg-framework's root variable.
-	 *
-	 * RETURNS:
-	 * string - Path to root as defined by user.
-	 */
-	public function getRoot()			{return $this->root;}
 	
 	/**
-	 * Get path to controllers directory.
+	 * \brief Get path to controllers directory.
 	 *
-	 * RETURNS:
-	 * string - Path to controllers directory.
+	 * \return string Path to controllers directory.
 	 */
 	public function getControllersPath(){return $this->controllersPath;}
 	
 	
 	/**
+	 * \brief Create an URL path from a file path.
+	 *
 	 * Create an URL path from a file path that points to a file using the file controller.
+	 * 
+	 * \param filePath string Path to file to create URL path from.
 	 *
-	 * PARAMS:
-	 * filePath, string - Path to file to create URL path from.
-	 *
-	 * RETURNS:
-	 * string - URL path pointing to the file through the file controller.
+	 * \throw Exception if filePath parameter is not below controllers directory.
+	 * 
+	 * \return string URL path pointing to the file through the file controller.
 	 */
 	public function path2url($filePath)
 	{
@@ -496,27 +458,18 @@ Class GygFramework
 		// Resolve path references like "." and ".."
 		$filePath = realpath($filePath);
 
-		// Remove ROOT from file path.
-		$filePath = str_replace($this->getRoot(), '', $filePath);
+		// Make sure filePath is below controllers directory.
+		if(strpos($filePath, $this->controllersPath))
+				throw new Exception("Invalid path: '{$originalFilePath}'. Only files below '{$this->controllersPath}' directory allowed.");
+				
+		// Remove controllers directory path from filePath.
+		$filePath = str_replace($this->controllersPath, '', $filePath);
 		
 		// Remove trailing slashes.
 		$filePath = trim($filePath, '/');
 		
-		// Make array.
-		$pathArray = explode('/', $filePath);
 		
-		$arrayCount = count($pathArray);
-		
-		
-		
-		// Only allow linking to directories below controllers directory.
-		if($pathArray[0] !== basename($this->getControllersPath()))
-			throw new Exception('gyg->path2url (main.php): Invalid path: "' . $originalFilePath . '". Only files below "controllers" directory allowed.');
-			
-		unset($pathArray[0]);
-
-
-		$url = "/file/" . implode('/', $pathArray);
+		$url = "/file/{$filePath}";
 		
 		// If not using RewriteRule, simply prepend a query sign.
 		if($this->useRewriteRule === false)
