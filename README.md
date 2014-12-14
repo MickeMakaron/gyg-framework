@@ -17,13 +17,16 @@ Features include:
 
 ##Setup
 * Install files anywhere.
-* Declare gyg-framework object and configure its settings. Here follows a version of [playhouse]: http://mikael.hernvall.com/playhouse  (Playhouse)
-as example:
+* Declare gyg-framework object and configure its settings. Here follows a version of [Playhouse](http://mikael.hernvall.com/playhouse "Playhouse") as example:
 
-	<$gyg = new GygFramework($root, $baseUrl, $defaultController);>
-	<$gyg->useRewriteRule($useRewriteRule);>
-	<$gyg->whitelistControllers($controllers);>
-	<$gyg->whitelistShortcuts($shortcuts);>
+    <$gyg = new GygFramework($root, $baseUrl, $defaultController);>
+    
+    <$gyg->useRewriteRule($useRewriteRule);>
+    
+    <$gyg->whitelistControllers($controllers);>
+    
+    <$gyg->whitelistShortcuts($shortcuts);>
+    
 * Done!
 
 
