@@ -3,7 +3,7 @@
  ****************************************************************
  * 
  * gyg-framework - Basic framework for web development
- * Copyright (C) 2014 Mikael Hernvall (mikael@hernvall.com)
+ * Copyright (C) 2014-2015 Mikael Hernvall (mikael@hernvall.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -329,33 +329,6 @@ Class GygFramework
 		$query = explode("/", $query);
 			
 		return $query;
-	}
-	
-	/**
-	 * \brief Include a file into buffer.
-	 *
-	 * \param path string Path to file to include.
-	 *
-	 * \return string Content of output buffer after
-	 * inclusion of $path.
-	 */
-	public function silentInclude($path)
-	{
-		ob_start();
-		include($path);
-		return ob_get_clean();
-	}
-	
-	/**
-	 * \brief Render a template file 
-	 *
-	 * \param path string Path to template file.
-	 * \param vars array Variables used in template file.
-	 */
-	public function render($path, $vars = [])
-	{	
-		extract($vars);
-		include($path);
 	}
 
 	/**
