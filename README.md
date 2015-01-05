@@ -10,7 +10,6 @@ Note that gyg-framework
 * is self-contained.
 
 Features include:
-* File-handling
 * Shortcuts
 
 ##Setup
@@ -67,38 +66,3 @@ into
 If controller is whitelisted and its main file exists, return the path to its main file. If controller is not whitelisted, return the path to default controller's main file.
 
 That's it! The controller alone decides how to interpret remaining arguments.
-
-###File-handling
-The file-handling depends on the _file_ controller that comes with gyg-framework. Thus, make sure the _file_ controller is installed and whitelisted (see **Controller setup**.)
-
-In short, the gyg-framework can convert local file paths to URLs, using _path2url_. Converting the path
-    
-    webroot/controllers/controller/img.jpg
-    
-assuming _controllersPath_ is set to _webroot/controllers_, will result in
-    
-    baseUrl/file/controller/img.jpg
-    
-_path2url_ is essentially converting a file path located in a controller's directory into a request URI that points to a path relative to _controllersPath_. Note that 
-
-    baseUrl/file/
-    
-will always be the prefix of the resulting URL.
-
-###Shortcuts
-To avoid lengthy URLs, gyg-framework can associate a request URI to a shortcut ID. For example, a page with the request URI
-
-	controller/page/arg1
-can be shortened to:
-
-	shortcutID
-
-To do this, simply whitelist the _shortcutID_ using _whitelistShortcut_.
-
-    $gyg->whitelistShortcut($shorcutID, $requestURI);
-    
-If using _whitelistShortcuts_, note that the shortcut data must be formatted like an array whose keys are the shortcuts' IDs and the values are the real request URIs they point to.
-
-Now gyg-framework will interpret "shortcutID" as "controller/page/arg1". Note, however,
-that shortcuts have lower priority than controllers. If a whitelisted shortcut and controller share
-the same ID, gyg-framework will prioritize the controller. For this reason, try to use unique IDs.
